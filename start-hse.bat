@@ -7,15 +7,27 @@ echo.
 
 cd /d "%~dp0"
 
-echo [1/3] Starting Docker containers...
-docker compose up -d
+echo [1/4] Starting Docker Desktop...
+start "" "C:\Program Files\Docker\Docker\Docker Desktop.exe"
+
+echo [2/4] Waiting for Docker to be ready...
+:wait_docker
+docker info >nul 2>&1
+if errorlevel 1 (
+    echo        Still waiting for Docker...
+    timeout /t 5 /nobreak >nul
+    goto wait_docker
+)
+echo        Docker is ready!
 echo.
 
-echo [2/3] Waiting for PostgreSQL to be ready...
+echo [3/4] Starting database containers...
+docker compose up -d
+echo        Waiting for PostgreSQL...
 timeout /t 5 /nobreak >nul
 echo.
 
-echo [3/3] Starting Next.js development server...
+echo [4/4] Starting Next.js development server...
 echo.
 echo ============================================
 echo   App ready at: http://localhost:3000
