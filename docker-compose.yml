@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: hse-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: hse_db
+      POSTGRES_USER: hse_user
+      POSTGRES_PASSWORD: hse_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - hse_pgdata:/var/lib/postgresql/data
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: hse-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  hse_pgdata:

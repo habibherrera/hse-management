@@ -1,0 +1,224 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 97%;
+    --foreground: 220 30% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 30% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 30% 10%;
+    --primary: 220 70% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 15% 93%;
+    --secondary-foreground: 220 30% 15%;
+    --muted: 220 15% 93%;
+    --muted-foreground: 220 10% 50%;
+    --accent: 36 95% 52%;
+    --accent-foreground: 36 95% 15%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 15% 90%;
+    --input: 220 15% 90%;
+    --ring: 220 70% 45%;
+    --radius: 0.625rem;
+
+    /* HSE custom tokens */
+    --sidebar-bg: 222 47% 11%;
+    --sidebar-fg: 220 15% 85%;
+    --sidebar-active: 36 95% 52%;
+    --severity-low: 152 69% 41%;
+    --severity-medium: 45 93% 47%;
+    --severity-high: 24 95% 53%;
+    --severity-critical: 0 72% 51%;
+    --success: 152 69% 41%;
+    --warning: 45 93% 47%;
+    --info: 220 70% 45%;
+  }
+
+  .dark {
+    --background: 224 30% 8%;
+    --foreground: 220 15% 90%;
+    --card: 224 25% 12%;
+    --card-foreground: 220 15% 90%;
+    --popover: 224 25% 12%;
+    --popover-foreground: 220 15% 90%;
+    --primary: 220 70% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 224 20% 18%;
+    --secondary-foreground: 220 15% 80%;
+    --muted: 224 20% 18%;
+    --muted-foreground: 220 10% 55%;
+    --accent: 36 95% 52%;
+    --accent-foreground: 36 95% 90%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 224 15% 20%;
+    --input: 224 15% 20%;
+    --ring: 220 70% 55%;
+
+    /* HSE custom tokens - dark */
+    --sidebar-bg: 224 35% 6%;
+    --sidebar-fg: 220 15% 80%;
+    --sidebar-active: 36 95% 52%;
+    --severity-low: 152 69% 45%;
+    --severity-medium: 45 93% 52%;
+    --severity-high: 24 95% 58%;
+    --severity-critical: 0 72% 55%;
+    --success: 152 69% 45%;
+    --warning: 45 93% 52%;
+    --info: 220 70% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer components {
+  /* Animated gradient for login background */
+  .login-gradient {
+    background: linear-gradient(135deg, hsl(222 47% 11%) 0%, hsl(220 60% 20%) 50%, hsl(222 47% 14%) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .login-gradient::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, hsla(36, 95%, 52%, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, hsla(220, 70%, 45%, 0.06) 0%, transparent 50%);
+    animation: gradient-shift 8s ease-in-out infinite alternate;
+  }
+  @keyframes gradient-shift {
+    0% { opacity: 0.6; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1.05); }
+  }
+
+  /* Grid pattern overlay */
+  .grid-pattern {
+    background-image:
+      linear-gradient(hsla(220, 15%, 85%, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, hsla(220, 15%, 85%, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Card hover effect */
+  .card-hover {
+    @apply transition-all duration-300 ease-out;
+  }
+  .card-hover:hover {
+    @apply shadow-lg -translate-y-0.5;
+    box-shadow: 0 10px 40px -12px hsla(220, 30%, 10%, 0.1);
+  }
+  .dark .card-hover:hover {
+    box-shadow: 0 10px 40px -12px hsla(220, 80%, 5%, 0.5);
+  }
+
+  /* KPI card glow */
+  .kpi-card {
+    @apply relative overflow-hidden;
+  }
+  .kpi-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--kpi-color, hsl(220 70% 45%)), transparent);
+    border-radius: 999px;
+  }
+
+  /* Staggered fade-in animation */
+  .fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+    opacity: 0;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Sidebar styling */
+  .sidebar-dark {
+    background: hsl(var(--sidebar-bg));
+    color: hsl(var(--sidebar-fg));
+  }
+
+  /* Status dot pulse */
+  .status-pulse {
+    animation: pulse-ring 2s ease-out infinite;
+  }
+  @keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 currentColor; }
+    70% { box-shadow: 0 0 0 6px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+
+  /* Table row hover */
+  .table-row-hover {
+    @apply transition-colors duration-150;
+  }
+  .table-row-hover:hover {
+    background: hsla(220, 70%, 45%, 0.04);
+  }
+  .dark .table-row-hover:hover {
+    background: hsla(220, 70%, 55%, 0.08);
+  }
+
+  /* Noise texture overlay for depth */
+  .noise-overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  /* Smooth scroll */
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+  .scroll-smooth::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scroll-smooth::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scroll-smooth::-webkit-scrollbar-thumb {
+    background: hsl(220 15% 80%);
+    border-radius: 999px;
+  }
+  .scroll-smooth::-webkit-scrollbar-thumb:hover {
+    background: hsl(220 15% 65%);
+  }
+  .dark .scroll-smooth::-webkit-scrollbar-thumb {
+    background: hsl(220 15% 25%);
+  }
+  .dark .scroll-smooth::-webkit-scrollbar-thumb:hover {
+    background: hsl(220 15% 35%);
+  }
+}

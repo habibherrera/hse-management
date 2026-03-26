@@ -1,0 +1,343 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ──────────────────────────────────────────
+
+enum Role {
+  REPORTER
+  SUPERVISOR
+  HSE
+  MANAGER
+  ADMIN
+}
+
+enum ActionStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  OVERDUE
+}
+
+enum InvestigationMethod {
+  FIVE_WHYS
+  CAUSE_TREE
+  OTHER
+}
+
+enum InvestigationStatus {
+  DRAFT
+  IN_REVIEW
+  APPROVED
+}
+
+// ─── Users ──────────────────────────────────────────
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(REPORTER)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  reportedEvents     Event[]           @relation("EventReporter")
+  ownedEvents        Event[]           @relation("EventOwner")
+  createdEvents      Event[]           @relation("EventCreatedBy")
+  updatedEvents      Event[]           @relation("EventUpdatedBy")
+  ownedActions       CorrectiveAction[] @relation("ActionOwner")
+  createdActions     CorrectiveAction[] @relation("ActionCreatedBy")
+  updatedActions     CorrectiveAction[] @relation("ActionUpdatedBy")
+  completedInvestigations Investigation[] @relation("InvestigationCompletedBy")
+  approvedInvestigations  Investigation[] @relation("InvestigationApprovedBy")
+  uploadedEvidence   Evidence[]
+
+  @@map("users")
+}
+
+// ─── Catalogs ───────────────────────────────────────
+
+model EventType {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  code        String   @unique
+  description String?
+  active      Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  events   Event[]
+  slaRules SlaRule[]
+
+  @@map("event_types")
+}
+
+model Severity {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  code        String   @unique
+  color       String   @default("#6B7280")
+  description String?
+  active      Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  events   Event[]
+  slaRules SlaRule[]
+
+  @@map("severities")
+}
+
+model EventStatus {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  code        String   @unique
+  description String?
+  isClosed    Boolean  @default(false)
+  active      Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  events Event[]
+
+  @@map("event_statuses")
+}
+
+model Site {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  code        String   @unique
+  description String?
+  active      Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  events Event[]
+
+  @@map("sites")
+}
+
+model Area {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  code        String   @unique
+  description String?
+  active      Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  events Event[]
+
+  @@map("areas")
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  code        String   @unique
+  description String?
+  active      Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  events Event[]
+
+  @@map("projects")
+}
+
+model Shift {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  code        String   @unique
+  description String?
+  active      Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  events Event[]
+
+  @@map("shifts")
+}
+
+model Contractor {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  code        String   @unique
+  description String?
+  active      Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  events Event[]
+
+  @@map("contractors")
+}
+
+// ─── Core Entities ──────────────────────────────────
+
+model Event {
+  id            String   @id @default(cuid())
+  eventNumber   String   @unique
+  eventDateTime DateTime
+  reportedAt    DateTime @default(now())
+  description   String
+  isAnonymous   Boolean  @default(false)
+  isConfidential Boolean @default(false)
+  dueDate       DateTime?
+  closedAt      DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Catalog relations
+  eventTypeId String
+  eventType   EventType @relation(fields: [eventTypeId], references: [id])
+
+  severityId String
+  severity   Severity @relation(fields: [severityId], references: [id])
+
+  statusId String
+  status   EventStatus @relation(fields: [statusId], references: [id])
+
+  siteId String
+  site   Site @relation(fields: [siteId], references: [id])
+
+  areaId String
+  area   Area @relation(fields: [areaId], references: [id])
+
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id])
+
+  shiftId String?
+  shift   Shift? @relation(fields: [shiftId], references: [id])
+
+  contractorId String?
+  contractor   Contractor? @relation(fields: [contractorId], references: [id])
+
+  // User relations
+  reporterUserId String?
+  reporterUser   User? @relation("EventReporter", fields: [reporterUserId], references: [id])
+
+  ownerUserId String
+  ownerUser   User @relation("EventOwner", fields: [ownerUserId], references: [id])
+
+  createdById String
+  createdBy   User @relation("EventCreatedBy", fields: [createdById], references: [id])
+
+  updatedById String
+  updatedBy   User @relation("EventUpdatedBy", fields: [updatedById], references: [id])
+
+  // Child relations
+  correctiveActions CorrectiveAction[]
+  investigation     Investigation?
+  evidence          Evidence[]
+
+  @@map("events")
+}
+
+model CorrectiveAction {
+  id          String       @id @default(cuid())
+  title       String
+  description String?
+  dueDate     DateTime
+  status      ActionStatus @default(OPEN)
+  closedAt    DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  eventId String
+  event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  ownerUserId String
+  ownerUser   User @relation("ActionOwner", fields: [ownerUserId], references: [id])
+
+  createdById String
+  createdBy   User @relation("ActionCreatedBy", fields: [createdById], references: [id])
+
+  updatedById String
+  updatedBy   User @relation("ActionUpdatedBy", fields: [updatedById], references: [id])
+
+  evidence Evidence[]
+
+  @@map("corrective_actions")
+}
+
+model Investigation {
+  id        String              @id @default(cuid())
+  method    InvestigationMethod @default(FIVE_WHYS)
+  summary   String?
+  rootCause String?
+  findings  String?
+  status    InvestigationStatus @default(DRAFT)
+  completedAt DateTime?
+  approvedAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  eventId String @unique
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  completedById String?
+  completedBy   User? @relation("InvestigationCompletedBy", fields: [completedById], references: [id])
+
+  approvedById String?
+  approvedBy   User? @relation("InvestigationApprovedBy", fields: [approvedById], references: [id])
+
+  @@map("investigations")
+}
+
+model Evidence {
+  id        String   @id @default(cuid())
+  fileName  String
+  filePath  String
+  fileSize  Int
+  mimeType  String
+  createdAt DateTime @default(now())
+
+  eventId String?
+  event   Event? @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  correctiveActionId String?
+  correctiveAction   CorrectiveAction? @relation(fields: [correctiveActionId], references: [id], onDelete: Cascade)
+
+  uploadedById String
+  uploadedBy   User @relation(fields: [uploadedById], references: [id])
+
+  @@map("evidence")
+}
+
+// ─── SLA Rules ──────────────────────────────────────
+
+model SlaRule {
+  id              String   @id @default(cuid())
+  maxDaysToClose  Int
+  reminderDays    Int[]    @default([])
+  escalationDays  Int?
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+
+  eventTypeId String?
+  eventType   EventType? @relation(fields: [eventTypeId], references: [id])
+
+  severityId String?
+  severity   Severity? @relation(fields: [severityId], references: [id])
+
+  @@map("sla_rules")
+}
+
+// ─── Event Number Sequence ──────────────────────────
+
+model EventSequence {
+  id      String @id @default("singleton")
+  year    Int
+  counter Int    @default(0)
+
+  @@map("event_sequence")
+}
