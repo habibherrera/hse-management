@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
-import { Sun, Moon, Monitor } from "lucide-react"
+import { Sun, Moon } from "lucide-react"
 import { useTranslation } from "@/providers/i18n-provider"
 
 export function ThemeToggle() {
@@ -25,7 +25,6 @@ export function ThemeToggle() {
   const modes = [
     { key: "light", icon: Sun, label: t("theme.light") },
     { key: "dark", icon: Moon, label: t("theme.dark") },
-    { key: "system", icon: Monitor, label: t("theme.system") },
   ] as const
 
   return (

@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useTranslation } from "@/providers/i18n-provider"
 import { LanguageSwitcher } from "@/components/layout/language-switcher"
+import { ThemeToggle } from "@/components/layout/theme-toggle"
 import { Shield, ArrowRight, AlertTriangle, HardHat, Eye, EyeOff } from "lucide-react"
 
 export default function LoginPage() {
@@ -51,7 +52,10 @@ export default function LoginPage() {
               <p className="text-xs text-slate-400 font-medium tracking-wide uppercase">Health, Safety & Environment</p>
             </div>
           </div>
-          <LanguageSwitcher />
+          <div className="flex items-center gap-1.5">
+            <ThemeToggle />
+            <LanguageSwitcher />
+          </div>
         </div>
 
         <div className="relative z-10 max-w-lg">

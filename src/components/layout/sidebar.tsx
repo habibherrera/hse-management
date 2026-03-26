@@ -55,17 +55,17 @@ export function Sidebar() {
         </div>
       </div>
 
+      {/* Settings bar */}
+      <div className="flex items-center justify-center gap-2 px-4 py-2.5 border-b border-white/[0.06]">
+        <ThemeToggle />
+        <LanguageSwitcher />
+      </div>
+
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 space-y-1">
-        <div className="flex items-center justify-between px-3 mb-3">
-          <p className="text-[10px] font-semibold text-slate-500 tracking-widest uppercase">
-            {t("nav.navigation")}
-          </p>
-          <div className="flex items-center gap-1.5">
-            <ThemeToggle />
-            <LanguageSwitcher />
-          </div>
-        </div>
+      <nav className="flex-1 px-3 py-3 space-y-1">
+        <p className="text-[10px] font-semibold text-slate-500 tracking-widest uppercase px-3 mb-2">
+          {t("nav.navigation")}
+        </p>
         {navItems.map((item) => {
           if (item.permission && userRole && !hasPermission(userRole, item.permission)) {
             return null
