@@ -1,5 +1,6 @@
 import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
+import GoogleProvider from "next-auth/providers/google"
 import { compare } from "bcryptjs"
 import { prisma } from "./prisma"
 
@@ -12,6 +13,10 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
   },
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -31,6 +36,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Credenciales inválidas")
         }
 
+        if (!user.password) {
+          throw new Error("Esta cuenta usa Google para iniciar sesión")
+        }
+
         const isValid = await compare(credentials.password, user.password)
         if (!isValid) {
           throw new Error("Credenciales inválidas")
@@ -46,10 +55,39 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
+    async signIn({ user, account }) {
+      if (account?.provider === "google") {
+        const email = user.email!
+        const existing = await prisma.user.findUnique({ where: { email } })
+
+        if (!existing) {
+          await prisma.user.create({
+            data: {
+              email,
+              name: user.name ?? email,
+              role: "REPORTER",
+              active: true,
+            },
+          })
+        } else if (!existing.active) {
+          return false
+        }
+      }
+      return true
+    },
+    async jwt({ token, user, account }) {
+      if (user && account?.provider === "credentials") {
         token.userId = user.id
         token.role = (user as any).role
+      }
+      if (account?.provider === "google") {
+        const dbUser = await prisma.user.findUnique({
+          where: { email: token.email! },
+        })
+        if (dbUser) {
+          token.userId = dbUser.id
+          token.role = dbUser.role
+        }
       }
       return token
     },

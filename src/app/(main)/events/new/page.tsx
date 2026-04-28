@@ -2,8 +2,14 @@ import { prisma } from "@/lib/prisma"
 import { requireAuth } from "@/lib/permissions"
 import { EventForm } from "@/components/events/event-form"
 
-export default async function NewEventPage() {
+export default async function NewEventPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ type?: string }>
+}) {
   await requireAuth()
+
+  const { type } = await searchParams
 
   const [eventTypes, severities, statuses, sites, areas, projects, shifts, contractors, users] =
     await Promise.all([
@@ -22,10 +28,15 @@ export default async function NewEventPage() {
       }),
     ])
 
+  const defaultEventTypeId = type
+    ? eventTypes.find((et) => et.code === type)?.id
+    : undefined
+
   return (
     <div className="mx-auto max-w-3xl">
       <EventForm
         catalogs={{ eventTypes, severities, statuses, sites, areas, projects, shifts, contractors, users }}
+        defaultEventTypeId={defaultEventTypeId}
       />
     </div>
   )

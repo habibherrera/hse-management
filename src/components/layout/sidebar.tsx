@@ -21,8 +21,8 @@ import {
 } from "lucide-react"
 
 const navItems = [
-  { key: "dashboard", href: "/dashboard", icon: LayoutDashboard, permission: null },
   { key: "events", href: "/events", icon: AlertTriangle, permission: null },
+  { key: "dashboard", href: "/dashboard", icon: LayoutDashboard, permission: null },
   { key: "reports", href: "/reports", icon: FileText, permission: "report:export" },
   { key: "catalogs", href: "/admin/catalogs", icon: Settings, permission: "catalog:manage" },
   { key: "users", href: "/admin/users", icon: Users, permission: "user:manage" },

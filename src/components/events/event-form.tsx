@@ -26,9 +26,10 @@ interface EventFormProps {
     contractors: Catalog[]
     users: { id: string; name: string; role: string }[]
   }
+  defaultEventTypeId?: string
 }
 
-export function EventForm({ catalogs }: EventFormProps) {
+export function EventForm({ catalogs, defaultEventTypeId }: EventFormProps) {
   const router = useRouter()
   const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
@@ -100,7 +101,7 @@ export function EventForm({ catalogs }: EventFormProps) {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-semibold">{t("eventForm.eventType")}</label>
-              <Select name="eventTypeId" required>
+              <Select name="eventTypeId" required defaultValue={defaultEventTypeId}>
                 <SelectTrigger className="h-11 rounded-xl"><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
                 <SelectContent>
                   {catalogs.eventTypes.map((tp) => (<SelectItem key={tp.id} value={tp.id}>{tp.name}</SelectItem>))}

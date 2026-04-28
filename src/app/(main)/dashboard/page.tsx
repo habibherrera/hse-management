@@ -3,7 +3,7 @@ import { requireAuth } from "@/lib/permissions"
 import { cookies } from "next/headers"
 import { getMessages, t, type Locale } from "@/lib/i18n"
 import { Badge } from "@/components/ui/badge"
-import { AlertTriangle, CheckCircle, Clock, AlertCircle, TrendingUp, ArrowUpRight } from "lucide-react"
+import { AlertTriangle, CheckCircle, Clock, AlertCircle, TrendingUp, ArrowUpRight, Plus, Zap, HardHat, Eye, ShieldAlert, Activity } from "lucide-react"
 import { DashboardCharts } from "@/components/dashboard/dashboard-charts"
 import { format, subDays } from "date-fns"
 import { es, enUS } from "date-fns/locale"
@@ -146,6 +146,14 @@ export default async function DashboardPage() {
     },
   ]
 
+  const quickActions = [
+    { code: "ACCIDENTE",         label: "Accidente",          icon: AlertTriangle, color: "text-red-600 dark:text-red-400",    bg: "bg-red-50 dark:bg-red-950/40",    border: "border-red-200 dark:border-red-900/50",    hover: "hover:bg-red-100 dark:hover:bg-red-950/60" },
+    { code: "CUASI_ACCIDENTE",   label: "Cuasi-accidente",    icon: Zap,           color: "text-amber-600 dark:text-amber-400", bg: "bg-amber-50 dark:bg-amber-950/40", border: "border-amber-200 dark:border-amber-900/50", hover: "hover:bg-amber-100 dark:hover:bg-amber-950/60" },
+    { code: "INCIDENTE",         label: "Incidente",          icon: Activity,      color: "text-orange-600 dark:text-orange-400", bg: "bg-orange-50 dark:bg-orange-950/40", border: "border-orange-200 dark:border-orange-900/50", hover: "hover:bg-orange-100 dark:hover:bg-orange-950/60" },
+    { code: "CONDICION_INSEGURA",label: "Condición Insegura", icon: Eye,           color: "text-blue-600 dark:text-blue-400",  bg: "bg-blue-50 dark:bg-blue-950/40",   border: "border-blue-200 dark:border-blue-900/50",   hover: "hover:bg-blue-100 dark:hover:bg-blue-950/60" },
+    { code: "ACTO_INSEGURO",     label: "Acto Inseguro",      icon: ShieldAlert,   color: "text-purple-600 dark:text-purple-400", bg: "bg-purple-50 dark:bg-purple-950/40", border: "border-purple-200 dark:border-purple-900/50", hover: "hover:bg-purple-100 dark:hover:bg-purple-950/60" },
+  ]
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -157,6 +165,36 @@ export default async function DashboardPage() {
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <TrendingUp className="h-4 w-4" />
           {t(msgs, "dashboard.avgCloseTime")} <span className="font-bold text-foreground">{data.avgCloseTime} {t(msgs, "common.days")}</span>
+        </div>
+      </div>
+
+      {/* Quick Report Actions */}
+      <div className="rounded-xl border bg-card p-5 fade-in">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10">
+              <Plus className="h-4 w-4 text-primary" />
+            </div>
+            <h3 className="text-[15px] font-bold">Nuevo Reporte</h3>
+          </div>
+          <Link href="/events/new" className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline">
+            Formulario completo <ArrowUpRight className="h-3 w-3" />
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          {quickActions.map((action, i) => (
+            <Link
+              key={action.code}
+              href={`/events/new?type=${action.code}`}
+              className={`flex flex-col items-center gap-2.5 rounded-xl border p-4 text-center transition-all duration-200 active:scale-[0.97] fade-in ${action.bg} ${action.border} ${action.hover}`}
+              style={{ animationDelay: `${i * 60}ms` }}
+            >
+              <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-white/70 dark:bg-black/20 shadow-sm`}>
+                <action.icon className={`h-5 w-5 ${action.color}`} />
+              </div>
+              <span className={`text-xs font-bold leading-tight ${action.color}`}>{action.label}</span>
+            </Link>
+          ))}
         </div>
       </div>
 
