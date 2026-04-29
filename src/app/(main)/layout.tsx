@@ -16,7 +16,7 @@ export default async function MainLayout({
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto scroll-smooth bg-background p-8">
+      <main className="flex-1 overflow-y-auto scroll-smooth bg-background p-4 pt-[72px] md:pt-4 md:p-8">
         <div className="mx-auto max-w-7xl">
           {children}
         </div>

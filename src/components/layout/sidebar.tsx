@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useSession, signOut } from "next-auth/react"
@@ -18,6 +19,8 @@ import {
   LogOut,
   Shield,
   ChevronRight,
+  Menu,
+  X,
 } from "lucide-react"
 
 const navItems = [
@@ -36,7 +39,7 @@ const roleColors: Record<Role, string> = {
   ADMIN: "bg-violet-500",
 }
 
-export function Sidebar() {
+function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
   const pathname = usePathname()
   const { data: session } = useSession()
   const { t } = useTranslation()
@@ -67,14 +70,13 @@ export function Sidebar() {
           {t("nav.navigation")}
         </p>
         {navItems.map((item) => {
-          if (item.permission && userRole && !hasPermission(userRole, item.permission)) {
-            return null
-          }
+          if (item.permission && userRole && !hasPermission(userRole, item.permission)) return null
           const isActive = pathname.startsWith(item.href)
           return (
             <Link
               key={item.key}
               href={item.href}
+              onClick={onNavClick}
               className={cn(
                 "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-medium transition-all duration-200",
                 isActive
@@ -91,9 +93,7 @@ export function Sidebar() {
                 <item.icon className="h-4 w-4" />
               </div>
               <span className="flex-1">{t(`nav.${item.key}`)}</span>
-              {isActive && (
-                <ChevronRight className="h-3.5 w-3.5 text-slate-500" />
-              )}
+              {isActive && <ChevronRight className="h-3.5 w-3.5 text-slate-500" />}
             </Link>
           )
         })}
@@ -103,7 +103,7 @@ export function Sidebar() {
       <div className="border-t border-white/[0.06] p-4">
         <div className="flex items-center gap-3 rounded-lg bg-white/[0.04] px-3 py-3 mb-3">
           <div className={cn(
-            "flex h-9 w-9 items-center justify-center rounded-lg text-white text-xs font-bold",
+            "flex h-9 w-9 items-center justify-center rounded-lg text-white text-xs font-bold shrink-0",
             userRole ? roleColors[userRole] : "bg-slate-600"
           )}>
             {session?.user?.name?.charAt(0)?.toUpperCase() || "?"}
@@ -124,5 +124,59 @@ export function Sidebar() {
         </button>
       </div>
     </div>
+  )
+}
+
+export function Sidebar() {
+  const [mobileOpen, setMobileOpen] = useState(false)
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <div className="hidden md:flex h-full">
+        <SidebarContent />
+      </div>
+
+      {/* Mobile top bar */}
+      <div className="md:hidden fixed top-0 left-0 right-0 z-40 flex h-14 items-center justify-between px-4 bg-[hsl(224,30%,10%)] border-b border-white/[0.06]">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/15">
+            <Shield className="h-4 w-4 text-amber-400" />
+          </div>
+          <span className="text-[15px] font-bold text-white tracking-tight">HSE Platform</span>
+        </div>
+        <button
+          onClick={() => setMobileOpen(true)}
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 hover:bg-white/[0.06] hover:text-white transition-colors"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Mobile drawer overlay */}
+      {mobileOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-50 flex"
+          onClick={() => setMobileOpen(false)}
+        >
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+
+          {/* Drawer */}
+          <div
+            className="relative flex h-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <SidebarContent onNavClick={() => setMobileOpen(false)} />
+            <button
+              onClick={() => setMobileOpen(false)}
+              className="absolute top-4 right-[-44px] flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-white hover:bg-white/20 transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   )
 }

@@ -157,14 +157,14 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-end justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">{t(msgs, "dashboard.title")}</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">{t(msgs, "dashboard.title")}</h1>
           <p className="text-muted-foreground mt-1">{t(msgs, "dashboard.subtitle")}</p>
         </div>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <TrendingUp className="h-4 w-4" />
-          {t(msgs, "dashboard.avgCloseTime")} <span className="font-bold text-foreground">{data.avgCloseTime} {t(msgs, "common.days")}</span>
+          <TrendingUp className="h-4 w-4 shrink-0" />
+          <span>{t(msgs, "dashboard.avgCloseTime")} <span className="font-bold text-foreground">{data.avgCloseTime} {t(msgs, "common.days")}</span></span>
         </div>
       </div>
 

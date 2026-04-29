@@ -68,14 +68,14 @@ export default async function EventsPage({ searchParams }: Props) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-end justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">{t(msgs, "events.title")}</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">{t(msgs, "events.title")}</h1>
           <p className="text-muted-foreground mt-1">{total} {t(msgs, "events.registered")}</p>
         </div>
         <Link
           href="/events/new"
-          className="inline-flex h-10 items-center gap-2 rounded-xl bg-[hsl(220,70%,45%)] px-5 text-sm font-semibold text-white transition-all duration-200 hover:bg-[hsl(220,70%,40%)] hover:shadow-lg hover:shadow-primary/25 active:scale-[0.98]"
+          className="inline-flex h-10 items-center gap-2 rounded-xl bg-[hsl(220,70%,45%)] px-4 sm:px-5 text-sm font-semibold text-white transition-all duration-200 hover:bg-[hsl(220,70%,40%)] hover:shadow-lg hover:shadow-primary/25 active:scale-[0.98]"
         >
           <Plus className="h-4 w-4" />
           {t(msgs, "events.newEvent")}
@@ -95,14 +95,14 @@ export default async function EventsPage({ searchParams }: Props) {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b bg-muted/40">
-                <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{t(msgs, "events.number")}</th>
-                <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{t(msgs, "events.type")}</th>
-                <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{t(msgs, "events.severity")}</th>
-                <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{t(msgs, "common.description")}</th>
-                <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{t(msgs, "events.site")}</th>
-                <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{t(msgs, "events.responsible")}</th>
-                <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{t(msgs, "common.status")}</th>
-                <th className="px-5 py-3.5 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{t(msgs, "events.dateCol")}</th>
+                <th className="px-4 py-3.5 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{t(msgs, "events.number")}</th>
+                <th className="px-4 py-3.5 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{t(msgs, "events.type")}</th>
+                <th className="px-4 py-3.5 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{t(msgs, "events.severity")}</th>
+                <th className="hidden sm:table-cell px-4 py-3.5 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{t(msgs, "common.description")}</th>
+                <th className="hidden lg:table-cell px-4 py-3.5 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{t(msgs, "events.site")}</th>
+                <th className="hidden lg:table-cell px-4 py-3.5 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{t(msgs, "events.responsible")}</th>
+                <th className="px-4 py-3.5 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{t(msgs, "common.status")}</th>
+                <th className="hidden md:table-cell px-4 py-3.5 text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{t(msgs, "events.dateCol")}</th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -116,27 +116,27 @@ export default async function EventsPage({ searchParams }: Props) {
               ) : (
                 events.map((event) => (
                   <tr key={event.id} className="table-row-hover">
-                    <td className="px-5 py-3.5">
+                    <td className="px-4 py-3.5">
                       <Link href={`/events/${event.id}`} className="font-bold font-mono text-primary hover:underline">
                         {event.eventNumber}
                       </Link>
                     </td>
-                    <td className="px-5 py-3.5 text-muted-foreground">{event.eventType.name}</td>
-                    <td className="px-5 py-3.5">
+                    <td className="px-4 py-3.5 text-muted-foreground text-xs">{event.eventType.name}</td>
+                    <td className="px-4 py-3.5">
                       <span className="inline-flex items-center gap-1.5 text-xs font-semibold" style={{ color: event.severity.color }}>
-                        <span className="h-2 w-2 rounded-full" style={{ backgroundColor: event.severity.color }} />
-                        {event.severity.name}
+                        <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: event.severity.color }} />
+                        <span className="hidden sm:inline">{event.severity.name}</span>
                       </span>
                     </td>
-                    <td className="px-5 py-3.5 max-w-[200px] truncate text-muted-foreground">{event.description}</td>
-                    <td className="px-5 py-3.5 text-muted-foreground">{event.site.name}</td>
-                    <td className="px-5 py-3.5 font-medium">{event.ownerUser.name}</td>
-                    <td className="px-5 py-3.5">
+                    <td className="hidden sm:table-cell px-4 py-3.5 max-w-[200px] truncate text-muted-foreground text-xs">{event.description}</td>
+                    <td className="hidden lg:table-cell px-4 py-3.5 text-muted-foreground text-xs">{event.site.name}</td>
+                    <td className="hidden lg:table-cell px-4 py-3.5 font-medium text-xs">{event.ownerUser.name}</td>
+                    <td className="px-4 py-3.5">
                       <Badge variant={event.status.isClosed ? "success" : "warning"} className="text-[10px]">
                         {event.status.name}
                       </Badge>
                     </td>
-                    <td className="px-5 py-3.5 text-muted-foreground text-xs">
+                    <td className="hidden md:table-cell px-4 py-3.5 text-muted-foreground text-xs">
                       {format(event.eventDateTime, "dd MMM yyyy", { locale: dateLocale })}
                     </td>
                   </tr>

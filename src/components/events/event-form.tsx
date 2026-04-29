@@ -98,7 +98,7 @@ export function EventForm({ catalogs, defaultEventTypeId }: EventFormProps) {
         <div className="rounded-xl border bg-card p-6 space-y-5">
           <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">{t("eventForm.sectionEvent")}</h3>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-semibold">{t("eventForm.eventType")}</label>
               <Select name="eventTypeId" required defaultValue={defaultEventTypeId}>
@@ -131,7 +131,7 @@ export function EventForm({ catalogs, defaultEventTypeId }: EventFormProps) {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-semibold">{t("eventForm.dateTime")}</label>
               <input type="datetime-local" name="eventDateTime" required className={inputClass} />
@@ -151,7 +151,7 @@ export function EventForm({ catalogs, defaultEventTypeId }: EventFormProps) {
         <div className="rounded-xl border bg-card p-6 space-y-5">
           <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">{t("eventForm.sectionLocation")}</h3>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-semibold">{t("eventForm.site")}</label>
               <Select name="siteId" required>
@@ -172,7 +172,7 @@ export function EventForm({ catalogs, defaultEventTypeId }: EventFormProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-semibold text-muted-foreground">{t("eventForm.project")}</label>
               <Select name="projectId">
@@ -206,7 +206,7 @@ export function EventForm({ catalogs, defaultEventTypeId }: EventFormProps) {
         <div className="rounded-xl border bg-card p-6 space-y-5">
           <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">{t("eventForm.sectionResponsibility")}</h3>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-semibold">{t("eventForm.responsible")}</label>
               <Select name="ownerUserId" required>
