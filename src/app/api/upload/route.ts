@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { writeFile, mkdir } from "fs/promises"
-import path from "path"
-import { v4 as uuidv4 } from "uuid"
+import { uploadToCloudinary } from "@/lib/cloudinary"
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions)
@@ -26,25 +24,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Archivo demasiado grande" }, { status: 400 })
   }
 
-  const uploadDir = process.env.UPLOAD_DIR || "./uploads"
-  const ext = path.extname(file.name)
-  const fileName = `${uuidv4()}${ext}`
-  const filePath = path.join(uploadDir, fileName)
-
-  await mkdir(uploadDir, { recursive: true })
-
   const bytes = await file.arrayBuffer()
-  await writeFile(filePath, Buffer.from(bytes))
+  const buffer = Buffer.from(bytes)
+
+  const { url } = await uploadToCloudinary(buffer, file.name, file.type)
 
   const evidence = await prisma.evidence.create({
     data: {
       fileName: file.name,
-      filePath: fileName,
+      filePath: url,
       fileSize: file.size,
       mimeType: file.type,
       eventId: eventId || null,
       correctiveActionId: correctiveActionId || null,
-      uploadedById: session.user.id,
+      uploadedById: (session.user as any).id,
     },
   })
 

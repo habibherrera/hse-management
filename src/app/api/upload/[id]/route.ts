@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { readFile } from "fs/promises"
-import path from "path"
 
 export async function GET(
   _request: NextRequest,
@@ -22,18 +20,6 @@ export async function GET(
     return NextResponse.json({ error: "Archivo no encontrado" }, { status: 404 })
   }
 
-  const uploadDir = process.env.UPLOAD_DIR || "./uploads"
-  const filePath = path.join(uploadDir, evidence.filePath)
-
-  try {
-    const fileBuffer = await readFile(filePath)
-    return new NextResponse(fileBuffer, {
-      headers: {
-        "Content-Type": evidence.mimeType,
-        "Content-Disposition": `inline; filename="${evidence.fileName}"`,
-      },
-    })
-  } catch {
-    return NextResponse.json({ error: "Archivo no encontrado en disco" }, { status: 404 })
-  }
+  // filePath now stores the Cloudinary URL — redirect directly
+  return NextResponse.redirect(evidence.filePath)
 }
